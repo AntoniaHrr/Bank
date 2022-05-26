@@ -45,6 +45,8 @@ public:
 		this->ID = customer.getId();
 	}
 
+	//getters
+
 	double getBalance() const {
 		return amount;
 	}
@@ -60,6 +62,7 @@ public:
 	int getID() const {
 		return ID;
 	}
+	//setters
 
 	void setIban(char* iban) {
 
@@ -75,12 +78,20 @@ public:
 	void setID(Customer customer) {
 		this->ID = customer.getId();
 	};
-	void setUserName(char* username) {
-		delete[] username;
+	void setUserName(const char* username) {
+		delete[] this->username;
 		int len = strlen(username);
 		this->username = new char[len + 1];
 		strcpy(this->username, username);
 	}
+	void setPassword(const char* password) {
+		delete[] this->password;
+		int len = strlen(password);
+		this->password = new char[len + 1];
+		strcpy(this->password, password);
+	}
+
+	//Constructors
 
 	Account(const Account& other) {
 		copyFrom(other);

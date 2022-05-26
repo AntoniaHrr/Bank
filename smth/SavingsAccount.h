@@ -15,6 +15,10 @@ public:
 
 	}
 
+	void setInvestRate(double investRate) {
+		this->investRate = investRate;
+	}
+
 	void displayInformation() const override
 	{
 		cout << "Name: " << getUserName() << endl;
