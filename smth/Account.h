@@ -7,30 +7,58 @@
 
 using namespace std;
 
-class Account : public Customer {
+class Account {
+	Customer customer;
 	char* iban;
+	char* username;
+	char* password;
+	int ID;
 	double amount;
 	tm* dateOfCreation;
 public:
 	Account() {
 		this->iban = nullptr;
+		this->ID = 0;
 		this->amount = 0;
+		this->password = nullptr;
+		this->username = nullptr;
 		dateOfCreation = nullptr;
-
 	}
 
-	Account(char* username, char* email, int id, char* iban, double amount) : Customer(username, email, id), iban(iban) {
+	Account(char* username, char* password, int ID, char* iban, double amount) {
 		this->amount = amount;
 		time_t t = time(0);   // get time now
-	    this->dateOfCreation = localtime(&t);
+		this->dateOfCreation = localtime(&t);
+
+		int len = strlen(username);
+		this->username = new char[len + 1];
+		strcpy(this->username, username);
+
+		int leng = strlen(iban);
+		this->iban = new char[leng + 1];
+		strcpy(this->iban, iban);
+
+		int lenght = strlen(password);
+		this->password = new char[lenght + 1];
+		strcpy(this->password, password);
+
+		this->ID = customer.getId();
 	}
 
 	double getBalance() const {
 		return amount;
 	}
 
+	char* getUserName() const {
+		return customer.getName();
+	}
+
 	char* getIBAN() const {
 		return iban;
+	}
+
+	int getID() const {
+		return ID;
 	}
 
 	void setIban(char* iban) {
@@ -44,9 +72,17 @@ public:
 	void setBalance(double amount) {
 		this->amount = amount;
 	}
+	void setID(Customer customer) {
+		this->ID = customer.getId();
+	};
+	void setUserName(char* username) {
+		delete[] username;
+		int len = strlen(username);
+		this->username = new char[len + 1];
+		strcpy(this->username, username);
+	}
 
 	Account(const Account& other) {
-		Customer::Customer(other);
 		copyFrom(other);
 	}
 
@@ -59,36 +95,35 @@ public:
 	}
 
 	void copyFrom(const Account& other) {
-		Customer::copyFrom(other);
 		int lenght = strlen(other.iban);
 		this->iban = new char[lenght + 1];
 		strcpy(this->iban, other.iban);
+
+		int len = strlen(other.username);
+		this->username = new char[len + 1];
+		strcpy(this->username, other.username);
+
+		int leng = strlen(other.password);
+		this->password = new char[leng + 1];
+		strcpy(this->password, other.password);
+
+		this->ID = other.ID;
+
 		this->amount = other.amount;
 		this->dateOfCreation = other.dateOfCreation;
 	}
 
 	void free() {
-		//Customer::free();
 		delete[] iban;
-	}
+		delete[] username;
+		delete[] password;
+	} 
 
-	void withdrawMoney(double amount) {
-		if (amount <= 0) {
-			throw invalid_argument("Amount can't be negative");
-		}
-		setBalance(getBalance() - amount);
-		if (getBalance() < 0) {
-			throw invalid_argument("Balance is negative");
-		}
-	}
-	void depositMoney(double amount) {
-		setBalance(getBalance() + amount);
-	}
-	void displayInformation() {
-		cout << "Name: " << getUsername()<<endl;
-		cout << "IBAN: " << getIBAN() << endl;
-		cout << "Balance" << getBalance() << endl;
-	}
+	virtual void withdrawMoney(double amount) = 0;
+	
+	virtual void depositMoney(double amount) = 0;
+
+	virtual void displayInformation() const = 0; //virtual
 
 	int getTime() const throw() {
 		return dateOfCreation->tm_year+1900;

@@ -4,21 +4,21 @@
 using namespace std;
 
 class Customer {
-	char* username;
+	char* name;
 	char* email;
 	int id;
 public:
 	Customer() {
-		username = nullptr;
+		name = nullptr;
 		email = nullptr;
 		id = 0;
 	}
 
-	Customer(char* username, char* email, int id) {
+	Customer(char* name, char* email, int id) {
 
-		int len = strlen(username);
-		this->username = new char[len + 1];
-		strcpy(this->username, username);
+		int len = strlen(name);
+		this->name = new char[len + 1];
+		strcpy(this->name, name);
 
 		int lenght = strlen(email);
 		this->email = new char[lenght + 1];
@@ -39,9 +39,9 @@ public:
 	}
 
 	void copyFrom(const Customer& other) {
-		int len = strlen(other.username);
-		this->username = new char[len + 1];
-		strcpy(this->username, other.username);
+		int len = strlen(other.name);
+		this->name = new char[len + 1];
+		strcpy(this->name, other.name);
 
 		int lenght = strlen(other.email);
 		this->email = new char[lenght + 1];
@@ -50,11 +50,11 @@ public:
 		this->id = other.id;
 	}
 
-	void setUsername(char* username) {
+	void setName(char* username) {
 
 		int len = strlen(username);
-		this->username = new char[len + 1];
-		strcpy(this->username, username);
+		this->name = new char[len + 1];
+		strcpy(this->name, username);
 	}
 	void setEmail(char* email) {
 		int lenght = strlen(email);
@@ -64,8 +64,8 @@ public:
 	void setId(int id) {
 		this->id = id;
 	}
-	char* getUsername() const {
-		return username;
+	char* getName() const {
+		return name;
 	}
 	char* getEmail() const {
 		return email;
@@ -75,7 +75,7 @@ public:
 	}
 
 	void free() {
-		delete[] username;
+		delete[] name;
 		delete[] email;
 	}
 

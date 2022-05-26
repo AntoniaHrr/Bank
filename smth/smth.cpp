@@ -16,8 +16,8 @@ int main() {
     iban = new char[10];
     cin.getline(iban, 10);
 
-    Account acc(name, email, 111, iban, 30);
-   cout<< acc.getTime();
+    /*Account acc(name, email, 111, iban, 30);
+   cout<< acc.getTime();*/
     //std::time_t t = std::time(0);   // get time now
     //std::tm* now = std::localtime(&t);
     //std::cout << (now->tm_year + 1900) << '-'
