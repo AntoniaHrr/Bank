@@ -33,6 +33,10 @@ public:
 		setBalance(getBalance() + amount);
 	}
 
+	void CopyFrom(SavingsAccount& other) {
+		Account::copyFrom(other);
+		this->investRate = other.investRate;
+	}
 
 
 

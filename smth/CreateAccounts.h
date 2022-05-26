@@ -51,16 +51,59 @@ public:
 		this->password = new char[length + 1]; //+ 1 for '\0'
 		strcpy(this->password, password);
 	}
-	void setId(Customer customer) {
-		id = customer.getId();
+	void setId(int id) {
+		this->id = id;
 	}
 
-	void addSavings_Account(Customer customer, double amount, char* IBAN, double interestRate) {
+	const int getID() const {
+		return id;
+	}
+	const int getNormal() const {
+		return normal_count;
+	}
+	const int getSavings() const {
+		return savings_count;
+	}
+	const int getPrivilege() const {
+		return privilege_count;
+	}
+
+
+	bool SavingsAcc_exist(char* IBAN) {
+		for (int i = 0; i < savings_count; i++)
+		{
+			if (strcmp(savings_accounts[i].getIBAN(), IBAN) == 0) {
+				return false;
+			}
+		}
+		return true;
+	}
+	bool NormalAcc_exist(char* IBAN) {
+		for (int i = 0; i < normal_count; i++)
+		{
+			if (strcmp(normal_accounts[i].getIBAN(), IBAN) == 0) {
+				return false;
+			}
+		}
+		return true;
+	}
+	bool PrivilegeAcc_exist(char* IBAN) {
+		for (int i = 0; i < privilege_count; i++)
+		{
+			if (strcmp(privilege_accounts[i].getIBAN(), IBAN) == 0) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+
+	void CreateSavings_Account(int id, double amount, char* IBAN, double interestRate) {
 
 				SavingsAccount newAcc;
 				newAcc.setBalance(amount);
 				newAcc.setIban(IBAN);
-				newAcc.setID(customer);
+				newAcc.setID(id);
 				newAcc.setUserName(this->username);
 				newAcc.setPassword(this->password);
 				newAcc.setInvestRate(interestRate);
@@ -76,13 +119,12 @@ public:
 				place_holder[savings_count - 1] = newAcc;
 				this->savings_accounts = place_holder;
 	}
-	//add userNames
-	void addNormal_Account(Customer customer, double amount, char* IBAN) {
+	void CreateNormal_Account(int id, double amount, char* IBAN) {
 
 		NormalAccount newAcc;
 		newAcc.setBalance(amount);
 		newAcc.setIban(IBAN);
-		newAcc.setID(customer);
+		newAcc.setID(id);
 		newAcc.setUserName(this->username);
 		newAcc.setPassword(this->password);
 
@@ -97,14 +139,15 @@ public:
 		place_holder[normal_count - 1] = newAcc;
 		this->normal_accounts = place_holder;
 	}
-	void addPrivilege_Account(Customer customer, double amount, char* IBAN) {
+	void CreatePrivilege_Account(int id, double amount, char* IBAN, double overdraft) {
 
 		PrivilegeAccount newAcc;
 		newAcc.setBalance(amount);
 		newAcc.setIban(IBAN);
-		newAcc.setID(customer);
+		newAcc.setID(id);
 		newAcc.setUserName(this->username);
 		newAcc.setPassword(this->password);
+		newAcc.setOverdraft(overdraft);
 
 		privilege_count++;
 		PrivilegeAccount* place_holder = new PrivilegeAccount[privilege_count];
@@ -116,6 +159,13 @@ public:
 
 		place_holder[privilege_count - 1] = newAcc;
 		this->privilege_accounts = place_holder;
+	}
+
+	void PrintNormal_Accounts() {
+		for (int i = 0; i < normal_count; i++) {
+			cout << "Normal account: " << normal_accounts[i].getID() << endl;
+		}
+
 	}
 
 

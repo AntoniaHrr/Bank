@@ -8,7 +8,6 @@
 using namespace std;
 
 class Account {
-	Customer customer;
 	char* iban;
 	char* username;
 	char* password;
@@ -42,7 +41,7 @@ public:
 		this->password = new char[lenght + 1];
 		strcpy(this->password, password);
 
-		this->ID = customer.getId();
+		this->ID = ID;
 	}
 
 	//getters
@@ -52,7 +51,7 @@ public:
 	}
 
 	char* getUserName() const {
-		return customer.getName();
+		return username;
 	}
 
 	char* getIBAN() const {
@@ -75,8 +74,8 @@ public:
 	void setBalance(double amount) {
 		this->amount = amount;
 	}
-	void setID(Customer customer) {
-		this->ID = customer.getId();
+	void setID(int id) {
+		this->ID = id;
 	};
 	void setUserName(const char* username) {
 		delete[] this->username;

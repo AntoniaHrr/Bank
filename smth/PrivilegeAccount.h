@@ -16,6 +16,10 @@ public:
 	PrivilegeAccount(char* username, char* password, int ID, char* iban, double amount, double overdraft) : Account(username, password, ID, iban, amount), overdraft(overdraft) {
 
 	}
+
+	void setOverdraft(double overdraft) {
+		this->overdraft = overdraft;
+	}
 	void displayInformation() const override
 	{
 		cout << "Name: " << getUserName() << endl;
@@ -35,6 +39,11 @@ public:
 
 	void depositMoney(double amount) override {
 		setBalance(getBalance() + amount);
+	}
+
+	void copyFrom(PrivilegeAccount& other) {
+		Account::copyFrom(other);
+		this->overdraft = other.overdraft;
 	}
 
 

@@ -1,8 +1,6 @@
 #pragma once
 #include "Customer.h"
-#include "NormalAccount.h"
-#include "PrivilegeAccount.h"
-#include "SavingsAccount.h"
+#include "CreateAccounts.h"
 #include "Account.h"
 
 #include <iostream>
@@ -16,36 +14,33 @@ private:
 	char* BankAdress;
 	Customer* customers;
 	int customers_count;
-	NormalAccount* normal_accounts;
-	int normal_count = 0;
-	SavingsAccount* savings_accounts;
-	int savings_count = 0;
-	PrivilegeAccount* privilege_accounts;
-	int privilege_count;
+	CreateAccounts* accounts;
+	int accounts_count;
 public:
 	Bank() {
 		this->customers = nullptr;
-		this->normal_accounts = nullptr;
-		this->savings_accounts = nullptr;
-		this->privilege_accounts = nullptr;
-		this->normal_count = 0;
-		this->privilege_count = 0;
-		this->savings_count = 0;
+		this->accounts = nullptr;
+		this->accounts_count = 0;
 		this->customers_count = 0;
 		BankAdress = nullptr;
 		BankName = nullptr;
 	}
 
 
-	void addCustomer(char* name, char* email) {
+	void addCustomer(char* name, char* email, char* password, char* username, int id) {
 		for (int i = 0; i < customers_count; i++)
 		{
-			if (strcmp(customers[i].getName(), name) == 0)
+			if (customers[i].getId()==id)
 			{
 				cout << "Customer is already registered!";
 				return;
 			}
 		}
+		Customer newCustomer;
+		newCustomer.setEmail(email);
+		newCustomer.setName(name);
+		newCustomer.setId(id);
+
 		customers_count++;
 		Customer* place_holder = new Customer[customers_count];
 		for (int i = 0; i < customers_count - 1; i++)
@@ -54,124 +49,72 @@ public:
 		}
 		delete[] this->customers;
 
-		place_holder[customers_count - 1].setEmail(email);
-		place_holder[customers_count - 1].setName(name);
+		place_holder[customers_count - 1] = newCustomer;
 
 		this->customers = place_holder;
 
-	}
+		CreateAccounts newAccount;
+		newAccount.setPassword(password);
+		newAccount.setUsername(username);
+		newAccount.setId(id);
 
-	void addSavings_Account(int id) {
-		for (int i = 0; i < customers_count; i++)
+		accounts_count++;
+		CreateAccounts* place_holder_accounts = new CreateAccounts[customers_count];
+		for (int i = 0; i < accounts_count - 1; i++)
 		{
-			if (customers[i].getId() == id)
-			{
-				SavingsAccount newAcc;
-				newAcc.setID(customers[i]);
-
-				savings_count++;
-				SavingsAccount* place_holder = new SavingsAccount[savings_count];
-				for (int i = 0; i < savings_count - 1; i++)
-				{
-					place_holder[i] = savings_accounts[i];
-				}
-				delete[] this->savings_accounts;
-
-				place_holder[savings_count - 1].setBalance(newAcc.getBalance());
-				place_holder[savings_count - 1].setIban(newAcc.getIBAN());
-				place_holder[savings_count - 1].setID(customers[i]);
-
-				this->savings_accounts = place_holder;
-
-				
-			}
+			place_holder_accounts[i] = accounts[i];
 		}
+		delete[] this->accounts;
+
+		place_holder_accounts[accounts_count - 1] = newAccount;
+
+		this->accounts = place_holder_accounts;
 	}
-	//add userNames
-	void addNormal_Account(int id) {
-		for (int i = 0; i < customers_count; i++)
+
+	void addSavings_Account(Customer customer, double amount, char* IBAN, double ineterstRate) {
+		for (int i = 0; i < accounts_count; i++)
 		{
-			if (customers[i].getId() == id)
-			{
-				NormalAccount newAcc;
-				newAcc.setID(customers[i]);
-
-				normal_count++;
-				NormalAccount* place_holder = new NormalAccount[normal_count];
-				for (int i = 0; i < normal_count - 1; i++)
-				{
-					place_holder[i] = normal_accounts[i];
+			if (accounts[i].getID() == customer.getId())
+			{	
+				if (accounts[i].SavingsAcc_exist(IBAN) == true) {
+					cout << "Can't create account with same IBAN!";
+					return;
 				}
-				delete[] this->normal_accounts;
-
-				place_holder[normal_count - 1].setBalance(newAcc.getBalance());
-				place_holder[normal_count - 1].setIban(newAcc.getIBAN());
-				place_holder[normal_count - 1].setID(customers[i]);
-
-				this->normal_accounts = place_holder;
-
-
+				accounts[i].CreateSavings_Account(customer.getId(),amount,IBAN, ineterstRate);
 			}
 		}
 	}
-	void addPrivilege_Account(int id) {
-		for (int i = 0; i < customers_count; i++)
+	void addNormal_Account(Customer customer, double amount, char* IBAN) {
+		for (int i = 0; i < accounts_count; i++)
 		{
-			if (customers[i].getId() == id)
+			if (accounts[i].getID() == customer.getId())
 			{
-				PrivilegeAccount newAcc;
-				newAcc.setID(customers[i]);
-
-				privilege_count++;
-				PrivilegeAccount* place_holder = new PrivilegeAccount[privilege_count];
-				for (int i = 0; i < privilege_count - 1; i++)
-				{
-					place_holder[i] = privilege_accounts[i];
+				if (accounts[i].NormalAcc_exist(IBAN) == true) {
+					cout << "Can't create account with same IBAN!";
+					return;
 				}
-				delete[] this->privilege_accounts;
-
-				place_holder[privilege_count - 1].setBalance(newAcc.getBalance());
-				place_holder[privilege_count - 1].setIban(newAcc.getIBAN());
-				place_holder[privilege_count - 1].setID(customers[i]);
-
-				this->privilege_accounts = place_holder;
-
-
+				accounts[i].CreateNormal_Account(customer.getId(), amount, IBAN);
+			}
+		}
+	}
+	void addPrivilege_Account(Customer customer, double amount, char* IBAN, double overdraft) {
+		for (int i = 0; i < accounts_count; i++)
+		{
+			if (accounts[i].getID() == customer.getId())
+			{
+				if (accounts[i].PrivilegeAcc_exist(IBAN) == true) {
+					cout << "Can't create account with same IBAN!";
+					return;
+				}
+				accounts[i].CreatePrivilege_Account(customer.getId(), amount, IBAN, overdraft);
 			}
 		}
 	}
 
 
 
-	//add from privileged
-	void transfer(const char* FromIBAN, const char* ToIBAN, double amount) {
-
-		for (int i = 0; i < normal_count; i++) {
-			if (strcmp(FromIBAN, normal_accounts[i].getIBAN()) == 0) {
-				for (int j = 0; j < normal_count; j++) {
-					if (strcmp(ToIBAN, normal_accounts[j].getIBAN()) == 0) {
-						normal_accounts[j].depositMoney(amount);
-						normal_accounts[i].withdrawMoney(amount);
-					}
-				}
-				for (int j = 0; j < savings_count; j++) {
-					if (strcmp(ToIBAN, savings_accounts[j].getIBAN()) == 0) {
-						savings_accounts[j].depositMoney(amount);
-						normal_accounts[i].withdrawMoney(amount);
-					}
-				}
-				for (int j = 0; j < privilege_count; j++) {
-					if (strcmp(ToIBAN, privilege_accounts[j].getIBAN()) == 0) {
-						privilege_accounts[j].depositMoney(amount);
-						normal_accounts[i].withdrawMoney(amount);
-					}
-				}
-			}
-		}
-
-
-	}
-
+	//fix
+	//void transfer(const char* FromIBAN, const char* ToIBAN, double amount);
 
 
 
@@ -181,45 +124,23 @@ public:
 		}
 	}
 	void listAccounts() {
-		cout << "Normal accounts:" << endl;
-		for (int i = 0; i < normal_count; i++) {
-			cout << normal_accounts[i].getUserName() << endl;
-		}
-		cout << "Savings Accounts: " << endl;
-		for (int i = 0; i < savings_count; i++) {
-			cout << savings_accounts[i].getUserName() << endl;
-		}
-		cout << "Privilege Accounts: " << endl;
-		for (int i = 0; i < privilege_count; i++) {
-			cout << privilege_accounts[i].getUserName() << endl;
+		for (int i = 0; i < accounts_count; i++) {
+				accounts[i].PrintNormal_Accounts();
+				//accounts[i].PrintSavings_Accounts();
+				//accounts[i].PrintPrivilege_Accounts();
 		}
 
 	}
 	void listCustomerAccounts(int id) {
-		for (int i = 0; i < customers_count; i++) {
-			if (customers[i].getId() == id) {
-				for (int j = 0; j < normal_count; j++) {
-					if (normal_accounts[j].getID() == id) {
-						cout << "Normal account: " << normal_accounts[j].getIBAN()<<endl;
-					}
-				}
-				for (int j = 0; j < savings_count; j++) {
-					if (savings_accounts[j].getID() == id) {
-						cout << "Savings account: " << savings_accounts[j].getIBAN() << endl;
-					}
-				}
-				for (int j = 0; j < privilege_count; j++) {
-					if (privilege_accounts[j].getID() == id) {
-						cout << "Privilege account: " << privilege_accounts[j].getIBAN() << endl;
-					}
-				}
+		for (int i = 0; i < accounts_count; i++) {
+			if (accounts[i].getID() == id) {
+				accounts[i].PrintNormal_Accounts();
+				//accounts[i].PrintSavings_Accounts();
+				//accounts[i].PrintPrivilege_Accounts();
+				
 			}
 		}
 	}
-
-
-
-
 
 	Bank(const Bank& other) {
 		copyFrom(other);
@@ -240,9 +161,7 @@ public:
 	}
 	void free() {
 		delete[] customers;
-		delete[] normal_accounts;
-		delete[] savings_accounts;
-		delete[] privilege_accounts;
+		delete[] accounts;
 		delete[] BankName;
 		delete[] BankAdress;
 
@@ -253,17 +172,9 @@ public:
 		for (int i = 0; i < other.customers_count; i++) {
 			this->customers[i] = other.customers[i];
 		}
-		savings_accounts = new SavingsAccount[other.savings_count];
-		for (int i = 0; i < other.savings_count; i++) {
-			this->savings_accounts[i] = other.savings_accounts[i];
-		}
-		normal_accounts = new NormalAccount[other.normal_count];
-		for (int i = 0; i < other.normal_count; i++) {
-			this->normal_accounts[i] = other.normal_accounts[i];
-		}
-		privilege_accounts = new PrivilegeAccount[other.privilege_count];
-		for (int i = 0; i < other.privilege_count; i++) {
-			this->privilege_accounts[i] = other.privilege_accounts[i];
+		accounts = new CreateAccounts[other.accounts_count];
+		for (int i = 0; i < other.accounts_count; i++) {
+			this->accounts[i] = other.accounts[i];
 		}
 		int len = strlen(other.BankName);
 		BankName = new char[len + 1];
@@ -274,9 +185,7 @@ public:
 		strcpy(this->BankAdress, other.BankAdress);
 
 		this->customers_count = other.customers_count;
-		this->savings_count = other.savings_count;
-		this->normal_count = other.normal_count;
-		this->privilege_count = other.privilege_count;
+		this->accounts_count = other.accounts_count;
 	}
 
 
