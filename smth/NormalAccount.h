@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include "Customer.h"
 
-class NormalAccount : public Account {
+class NormalAccount : virtual public Account {
 public:
 	NormalAccount() {
 

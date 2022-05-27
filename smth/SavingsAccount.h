@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include "Customer.h"
 
-class SavingsAccount : public Account {
+class SavingsAccount : virtual public Account {
 private:
 	double investRate;
 public:
@@ -37,6 +37,12 @@ public:
 		Account::copyFrom(other);
 		this->investRate = other.investRate;
 	}
+
+	SavingsAccount(SavingsAccount& other) {
+		CopyFrom(other);
+	}
+
+	//operator=
 
 
 

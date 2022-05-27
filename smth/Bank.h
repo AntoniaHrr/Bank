@@ -26,11 +26,15 @@ public:
 		BankName = nullptr;
 	}
 
+	Customer ReturnCustomer() const {
+		return customers[0];
+	}
 
-	void addCustomer(char* name, char* email, char* password, char* username, int id) {
+
+	void addCustomer(char* name, char* email, int id, char* username, char* password) {
 		for (int i = 0; i < customers_count; i++)
 		{
-			if (customers[i].getId()==id)
+			if (customers[i].getId()==id) //check by name?
 			{
 				cout << "Customer is already registered!";
 				return;
@@ -52,6 +56,7 @@ public:
 		place_holder[customers_count - 1] = newCustomer;
 
 		this->customers = place_holder;
+		
 
 		CreateAccounts newAccount;
 		newAccount.setPassword(password);
@@ -76,20 +81,21 @@ public:
 		{
 			if (accounts[i].getID() == customer.getId())
 			{	
-				if (accounts[i].SavingsAcc_exist(IBAN) == true) {
+				if (accounts[i].SavingsAcc_exist(IBAN) == false) {
 					cout << "Can't create account with same IBAN!";
 					return;
 				}
 				accounts[i].CreateSavings_Account(customer.getId(),amount,IBAN, ineterstRate);
 			}
 		}
+		cout << "Added new account!";
 	}
 	void addNormal_Account(Customer customer, double amount, char* IBAN) {
 		for (int i = 0; i < accounts_count; i++)
 		{
 			if (accounts[i].getID() == customer.getId())
 			{
-				if (accounts[i].NormalAcc_exist(IBAN) == true) {
+				if (accounts[i].NormalAcc_exist(IBAN) == false) {
 					cout << "Can't create account with same IBAN!";
 					return;
 				}
@@ -102,7 +108,7 @@ public:
 		{
 			if (accounts[i].getID() == customer.getId())
 			{
-				if (accounts[i].PrivilegeAcc_exist(IBAN) == true) {
+				if (accounts[i].PrivilegeAcc_exist(IBAN) == false) {
 					cout << "Can't create account with same IBAN!";
 					return;
 				}

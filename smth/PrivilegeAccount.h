@@ -5,13 +5,12 @@
 #include "Customer.h"
 
 
-class PrivilegeAccount : public Account {
+class PrivilegeAccount : virtual public Account {
 private:
 	double overdraft;
 public:
 	PrivilegeAccount() {
 		this->overdraft = 0;
-
 	}
 	PrivilegeAccount(char* username, char* password, int ID, char* iban, double amount, double overdraft) : Account(username, password, ID, iban, amount), overdraft(overdraft) {
 

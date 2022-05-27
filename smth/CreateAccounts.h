@@ -97,7 +97,6 @@ public:
 		return true;
 	}
 
-
 	void CreateSavings_Account(int id, double amount, char* IBAN, double interestRate) {
 
 				SavingsAccount newAcc;
@@ -158,6 +157,70 @@ public:
 		delete[] this->privilege_accounts;
 
 		place_holder[privilege_count - 1] = newAcc;
+		this->privilege_accounts = place_holder;
+	}
+
+	void DeleteNormal_Account(char* IBAN) {
+		int index = 0;
+		for (int i = 0; i < normal_count; i++) {
+			if (NormalAcc_exist(IBAN) == false) {
+				index = i;
+			}
+		}
+		normal_count--;
+		NormalAccount* place_holder = new NormalAccount[normal_count];
+		for (int i = 0; i < normal_count; i++) {
+			if (i < index) {
+				place_holder[i] = normal_accounts[i];
+			}
+			else {
+				place_holder[i] = normal_accounts[i++];
+			}
+		}
+
+		delete[] this->normal_accounts;
+		this->normal_accounts = place_holder;
+	}
+	void DeleteSavings_Account(char* IBAN) {
+		int index = 0;
+		for (int i = 0; i < savings_count; i++) {
+			if (SavingsAcc_exist(IBAN) == false) {
+				index = i;
+			}
+		}
+		savings_count--;
+		SavingsAccount* place_holder = new SavingsAccount[savings_count];
+		for (int i = 0; i < savings_count; i++) {
+			if (i < index) {
+				place_holder[i] = savings_accounts[i];
+			}
+			else {
+				place_holder[i] = savings_accounts[i++];
+			}
+		}
+
+		delete[] this->savings_accounts;
+		this->savings_accounts = place_holder;
+	}
+	void DeletePrivilege_Account(char* IBAN) {
+		int index = 0;
+		for (int i = 0; i < privilege_count; i++) {
+			if (PrivilegeAcc_exist(IBAN) == false) {
+				index = i;
+			}
+		}
+		privilege_count--;
+		PrivilegeAccount* place_holder = new PrivilegeAccount[privilege_count];
+		for (int i = 0; i < privilege_count; i++) {
+			if (i < index) {
+				place_holder[i] = privilege_accounts[i];
+			}
+			else {
+				place_holder[i] = privilege_accounts[i++];
+			}
+		}
+
+		delete[] this->privilege_accounts;
 		this->privilege_accounts = place_holder;
 	}
 
