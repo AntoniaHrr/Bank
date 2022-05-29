@@ -6,24 +6,27 @@
 
 class SavingsAccount : virtual public Account {
 private:
-	double investRate;
+	double interestRate;
 public:
 	SavingsAccount() {
-		this->investRate = 3.25;
+		this->interestRate = 3.25;
 	}
-	SavingsAccount(char* username, char* password, int ID, char* iban, double amount, double investRate) : Account(username, password, ID, iban, amount), investRate(investRate) {
+	SavingsAccount(char* username, char* password, int ID, char* iban, double amount, double interestRate) : Account(username, password, ID, iban, amount), interestRate(interestRate) {
 
+	}
+
+	const double getIneterstRate() const {
+		return interestRate;
 	}
 
 	void setInvestRate(double investRate) {
-		this->investRate = investRate;
+		this->interestRate = investRate;
 	}
 
 	void displayInformation() const override
 	{
-		cout << "Name: " << getUserName() << endl;
-		cout << "IBAN: " << getIBAN() << endl;
-		cout << "Balance" << getBalance() << endl;
+		Account::displayInformation();
+		cout << "Invest rate: " << getIneterstRate();
 	}
 	void withdrawMoney(double amount) override {
 		return;
@@ -35,14 +38,21 @@ public:
 
 	void CopyFrom(SavingsAccount& other) {
 		Account::copyFrom(other);
-		this->investRate = other.investRate;
+		this->interestRate = other.interestRate;
 	}
 
 	SavingsAccount(SavingsAccount& other) {
 		CopyFrom(other);
 	}
 
-	//operator=
+	SavingsAccount& operator=(const SavingsAccount& other) {
+		if (this != &other) {
+			Account::free();
+			copyFrom(other);
+		}
+		return *this;
+
+	}
 
 
 

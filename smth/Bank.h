@@ -26,20 +26,25 @@ public:
 		BankName = nullptr;
 	}
 
-	Customer ReturnCustomer() const {
-		return customers[0];
-	}
-
-
-	void addCustomer(char* name, char* email, int id, char* username, char* password) {
-		for (int i = 0; i < customers_count; i++)
+	bool CustomerExist(int id) {
+			for (int i = 0; i < customers_count; i++)
 		{
 			if (customers[i].getId()==id) //check by name?
 			{
-				cout << "Customer is already registered!";
-				return;
+				return true;
 			}
 		}
+
+			return false;
+	}
+
+	void addCustomer(char* name, char* email, int id) {
+
+		if (CustomerExist(id) == true) {
+			cout << "Customer is already registered!"<<endl;
+			return;
+		};
+		
 		Customer newCustomer;
 		newCustomer.setEmail(email);
 		newCustomer.setName(name);
@@ -59,8 +64,6 @@ public:
 		
 
 		CreateAccounts newAccount;
-		newAccount.setPassword(password);
-		newAccount.setUsername(username);
 		newAccount.setId(id);
 
 		accounts_count++;
@@ -75,54 +78,100 @@ public:
 
 		this->accounts = place_holder_accounts;
 	}
+	void DeleteCustomer(int id) {
+		int index;
+		for (int i = 0; i < customers_count; i++) {
+			if (customers[i].getId() == id) {
+				index = i;
+				break;
+			}
+		}
 
-	void addSavings_Account(Customer customer, double amount, char* IBAN, double ineterstRate) {
+		accounts_count--;
+		CreateAccounts* place_holder = new CreateAccounts[accounts_count];
+		for (int i = 0; i < accounts_count; i++) {
+			if (i < index) {
+				place_holder[i] = accounts[i];
+			}
+			else {
+				place_holder[i] = accounts[i++];
+			}
+		}
+
+		delete[] this->accounts;
+		this->accounts = place_holder;
+
+		customers_count--;
+		Customer* place_holder_customers = new Customer[customers_count];
+		for (int i = 0; i < customers_count; i++) {
+			if (i < index) {
+				place_holder_customers[i] = customers[i];
+			}
+			else {
+				place_holder_customers[i] = customers[i++];
+			}
+		}
+
+		delete[] this->customers;
+		this->customers = place_holder_customers;
+
+
+	}
+	void DeleteAccount(char* IBAN) {
+		for (int i = 0; i < accounts_count; i++) {
+			if (accounts[i].acc_exist(IBAN)) {
+				accounts[i].Delete_Account(IBAN);
+			}
+		}
+	}
+
+	void addSavings_Account(int Id, double amount, char* IBAN,char* username, char* password ,double ineterstRate) {
 		for (int i = 0; i < accounts_count; i++)
 		{
-			if (accounts[i].getID() == customer.getId())
-			{	
-				if (accounts[i].SavingsAcc_exist(IBAN) == false) {
+				if (accounts[i].acc_exist(IBAN)) {
 					cout << "Can't create account with same IBAN!";
 					return;
 				}
-				accounts[i].CreateSavings_Account(customer.getId(),amount,IBAN, ineterstRate);
-			}
+				accounts[i].CreateSavings_Account(Id,amount,IBAN, username, password,ineterstRate);
 		}
 		cout << "Added new account!";
 	}
-	void addNormal_Account(Customer customer, double amount, char* IBAN) {
+	void addNormal_Account(int Id, double amount, char* IBAN, const char* username, const char* password) {
 		for (int i = 0; i < accounts_count; i++)
 		{
-			if (accounts[i].getID() == customer.getId())
-			{
-				if (accounts[i].NormalAcc_exist(IBAN) == false) {
+				if (accounts[i].acc_exist(IBAN) == false) {
 					cout << "Can't create account with same IBAN!";
 					return;
 				}
-				accounts[i].CreateNormal_Account(customer.getId(), amount, IBAN);
-			}
+				accounts[i].CreateNormal_Account(Id, amount, IBAN, username, password);
+			
 		}
 	}
-	void addPrivilege_Account(Customer customer, double amount, char* IBAN, double overdraft) {
+	void addPrivilege_Account(int Id, double amount, char* IBAN, double overdraft,const char* username, const char* password) {
 		for (int i = 0; i < accounts_count; i++)
 		{
-			if (accounts[i].getID() == customer.getId())
-			{
-				if (accounts[i].PrivilegeAcc_exist(IBAN) == false) {
+				if (accounts[i].acc_exist(IBAN) == false) {
 					cout << "Can't create account with same IBAN!";
 					return;
 				}
-				accounts[i].CreatePrivilege_Account(customer.getId(), amount, IBAN, overdraft);
-			}
+				accounts[i].CreatePrivilege_Account(Id, amount, IBAN, overdraft, username, password);
+			
 		}
 	}
 
-
-
-	//fix
-	//void transfer(const char* FromIBAN, const char* ToIBAN, double amount);
-
-
+	void transfer( char* FromIBAN,  char* ToIBAN, double amount) {
+		for (int i = 0; i < accounts_count; i++) {
+			if (strcmp(accounts[i].getIBAN(i), FromIBAN)==0) {
+				for (int j = 0; j < accounts_count; j++) {
+					if (strcmp(accounts[j].getIBAN(j), ToIBAN) == 0)
+					{
+						accounts[i].Witdraw(amount, FromIBAN);
+						accounts[j].Deposit(amount, ToIBAN);
+					}
+				}
+			}
+		}
+	}
 
 	void listCustomers() {
 		for (int i = 0; i < customers_count; i++) {
@@ -131,19 +180,15 @@ public:
 	}
 	void listAccounts() {
 		for (int i = 0; i < accounts_count; i++) {
-				accounts[i].PrintNormal_Accounts();
-				//accounts[i].PrintSavings_Accounts();
-				//accounts[i].PrintPrivilege_Accounts();
+				accounts[i].Print_Accounts();
 		}
 
 	}
 	void listCustomerAccounts(int id) {
 		for (int i = 0; i < accounts_count; i++) {
 			if (accounts[i].getID() == id) {
-				accounts[i].PrintNormal_Accounts();
-				//accounts[i].PrintSavings_Accounts();
-				//accounts[i].PrintPrivilege_Accounts();
-				
+				accounts[i].Print_Accounts();
+				break;
 			}
 		}
 	}

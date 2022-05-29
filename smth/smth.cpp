@@ -5,7 +5,136 @@ using namespace std;
 #include <iostream>
 
 int main() {
-    cout << "Enter name: ";
+    Bank bank;
+    int number;
+
+    ////menu///
+    cout << "1.Register new customer"<<endl;
+    cout << "2.Remove customer from system"<<endl;
+    cout << "3.Add account to customer" << endl;
+    cout << "4.Remove customer's account" << endl;
+    cout << "5.List customers" << endl;
+    cout << "6.List accounts" << endl;
+    cout << "7.List customers's accounts" << endl;
+    cout << "8.Export log information" << endl;
+    cout << "9.Transfer money" << endl;
+    cout << "10.Get bank information" << endl;
+    while (true) {
+        cout << "Command:";
+        cin >> number;
+        cin.ignore();
+        if (number == 1) {
+            cout << "Enter name: ";
+            char* name;
+            name = new char[100];
+            cin.getline(name, 100);
+
+            cout << "Enter email: ";
+            char* email;
+            email = new char[100];
+            cin.getline(email, 100);
+
+            cout << "Enter ID: ";
+            int id;
+            cin >> id;
+
+            bank.addCustomer(name, email, id);
+        }
+        else if (number == 2) {
+            int Id;
+            cout << "Enter Id:";
+            cin >> Id;
+            cin.ignore();
+            if (bank.CustomerExist(Id) == true) {
+                bank.DeleteCustomer(Id);
+            }
+        }
+        else if (number == 3) {
+            int Id, type;
+            double amount, interestRate, overdraft;
+            char password[100], username[100];
+            char* Iban = new char[100];
+            cout << "Enter ID:";
+            cin >> Id;
+            if (bank.CustomerExist(Id) == true) {
+            cout << "Type of account: 1.Normal" << endl;
+            cout << "                 2.Savings" << endl;
+            cout << "                 3.Privilege" << endl;
+            cin >> type;
+            cin.ignore();
+            if (type == 1) {
+                cout << "Enter IBAN:";
+                cin.getline(Iban, 100);
+                cout << "Enter username:";
+                cin.getline(username, 100);
+                cout << "Enter password:";
+                cin.getline(password, 100);
+                cout << "Enter amount:";
+                cin >> amount;
+                cin.ignore();
+                bank.addNormal_Account(Id, amount, Iban, username, password);
+                delete[] Iban;
+            }
+            else if(type == 2) {
+                cout << "Enter IBAN:";
+                cin.getline(Iban, 100);
+                cout << "Enter InterestRate:";
+                cin >> interestRate;
+                cin.ignore();
+                cout << "Enter username:";
+                cin.getline(username, 100);
+                cout << "Enter password:";
+                cin.getline(password, 100);
+                cout << "Enter amount:";
+                cin >> amount;
+                cin.ignore();
+                bank.addSavings_Account(Id, amount, Iban, username, password, interestRate);
+                delete[] Iban;
+            }
+            else if(type == 3) {
+                cout << "Enter IBAN:";
+                cin.getline(Iban, 100);
+                cout << "Enter overdraft:";
+                cin >> overdraft;
+                cin.ignore();
+                cout << "Enter username:";
+                cin.getline(username, 100);
+                cout << "Enter password:";
+                cin.getline(password, 100);
+                cout << "Enter amount:";
+                cin >> amount;
+                cin.ignore();
+                bank.addPrivilege_Account(Id, amount, Iban,overdraft, username, password);
+                delete[] Iban;
+            }
+            }
+            
+        }
+        else if (number == 4) {
+            char* Iban = new char[100];
+            cout << "Enter IBAN:";
+            cin.getline(Iban, 100);
+            bank.DeleteAccount(Iban);
+        }
+        else if (number == 5) {
+            bank.listCustomers();
+        }
+        else if (number == 6) {
+            bank.listAccounts();
+        }
+        else if (number == 7) {
+            int Id;
+            cout << "Enter Id of customer:";
+            cin >> Id;
+            cin.ignore();
+            if (bank.CustomerExist(Id) == true) {
+                bank.listCustomerAccounts(Id);
+            }
+        }
+        else { cout << "Invalid command"; }
+       
+    }
+    /*cout << "Enter name: ";
     char* name;
     name = new char[100];
     cin.getline(name, 100);
@@ -20,6 +149,8 @@ int main() {
     int id;
     cin >> id;
 
+    bank.addCustomer(name, email, id);
+
     cin.ignore();
 
     cout << "Eneter username: ";
@@ -31,54 +162,7 @@ int main() {
     cout << "Enter password: ";
     char* password;
     password = new char[100];
-    cin.getline(password, 100);
-
-    cout << "Enter name: ";
-    char* nameA;
-    nameA = new char[100];
-    cin.getline(nameA, 100);
-
-    cout << "Enter email: ";
-    char* emailA;
-    emailA = new char[100];
-    cin.getline(emailA, 100);
-
-
-    cout << "Enter ID: ";
-    int idA;
-    cin >> idA;
-
-    cin.ignore();
-
-    cout << "Eneter username: ";
-    char* usernameA;
-    usernameA = new char[100];
-    cin.getline(usernameA, 100);
-
-
-    cout << "Enter password: ";
-    char* passwordA;
-    passwordA = new char[100];
-    cin.getline(passwordA, 100);
-    
-
-
-    Bank bank;
-    bank.addCustomer(name, email, id, username, password);
-    bank.addCustomer(nameA, emailA, idA, usernameA, passwordA);
-    bank.listCustomers();
-    cout << endl;
-    char* IBAN;
-    IBAN = new char[100];
-    cout << "Enter IBAN: ";
-    cin.getline(IBAN, 100);
-    double amount;
-    cout << "Enter amount: ";
-    cin >> amount;
-    cin.ignore();
-    double interestRate;
-    cin >> interestRate;
-    bank.addSavings_Account(bank.ReturnCustomer(), amount, IBAN, interestRate);
+    cin.getline(password, 100);*/
 
 
 

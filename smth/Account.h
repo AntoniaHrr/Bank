@@ -70,7 +70,7 @@ public:
 
 		int lenght = strlen(iban);
 		this->iban = new char[lenght + 1];
-		strcpy(this -> iban, iban);
+		strcpy(this->iban, iban);
 	}
 	void setBalance(double amount) {
 		this->amount = amount;
@@ -128,19 +128,25 @@ public:
 		delete[] iban;
 		delete[] username;
 		delete[] password;
-	} 
-
-	virtual void withdrawMoney(double amount) = 0;
-	
-	virtual void depositMoney(double amount) = 0;
-
-	virtual void displayInformation() const = 0; //virtual
-
-	int getTime() const throw() {
-		return dateOfCreation->tm_year+1900;
 	}
 
-	~Account() {
+	virtual void withdrawMoney(double amount) = 0;
+
+	virtual void depositMoney(double amount) {
+		setBalance(getBalance() + amount);
+	}
+
+	virtual void displayInformation() const {
+		cout << "Name: " << getUserName() << endl;
+		cout << "IBAN: " << getIBAN() << endl;
+		cout << "Balance" << getBalance() << endl;
+	}
+
+	int getTime() const throw() {
+		return dateOfCreation->tm_year + 1900;
+	}
+
+	virtual ~Account() {
 		free();
 	}
 

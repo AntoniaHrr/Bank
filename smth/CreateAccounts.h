@@ -11,222 +11,180 @@ using namespace std;
 
 class CreateAccounts {
 private:
-	char* username;
-	char* password;
 	int id;
-	NormalAccount* normal_accounts;
-	int normal_count;
-	SavingsAccount* savings_accounts;
-	int savings_count;
-	PrivilegeAccount* privilege_accounts;
-	int privilege_count;
+	Account** accounts;
+	int count;
 public:
 
 	CreateAccounts() {
-		this->username = nullptr;
-		this->password = nullptr;
 		this->id = 0;
-		this->normal_accounts = nullptr;
-		this->privilege_accounts = nullptr;
-		this->savings_accounts = nullptr;
-		this->normal_count = 0;
-		this->privilege_count = 0;
-		this->savings_count = 0;
+		this->accounts = nullptr;
+		this->count = 0;
 	}
-	void setUsername(const char* username) {
-		if (this->username != nullptr)
-		{
-			delete[] this->username;
-		}
-		int length = strlen(username);
-		this->username = new char[length + 1]; //+ 1 for '\0'
-		strcpy(this->username, username);
-	}
-	void setPassword(const char* password) {
-		if (this->password != nullptr)
-		{
-			delete[] this->password;
-		}
-		int length = strlen(password);
-		this->password = new char[length + 1]; //+ 1 for '\0'
-		strcpy(this->password, password);
-	}
+	//setters
+	
 	void setId(int id) {
 		this->id = id;
 	}
 
+	char* getIBAN(int i) const {
+		return accounts[i]->getIBAN();
+	}
+	//getters
+
 	const int getID() const {
 		return id;
 	}
-	const int getNormal() const {
-		return normal_count;
+
+	Account* getAccount(char* iban) {
+		for (int i = 0; i < count; i++)
+		{
+			if (strcmp(accounts[i]->getIBAN(), iban) == 0) {
+				return accounts[i];
+			}
+		}
+		return nullptr;
 	}
-	const int getSavings() const {
-		return savings_count;
-	}
-	const int getPrivilege() const {
-		return privilege_count;
+
+	bool acc_exist(char* IBAN) {
+		for (int i = 0; i < count; i++)
+		{
+			if (strcmp(accounts[i]->getIBAN(), IBAN) == 0) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 
-	bool SavingsAcc_exist(char* IBAN) {
-		for (int i = 0; i < savings_count; i++)
-		{
-			if (strcmp(savings_accounts[i].getIBAN(), IBAN) == 0) {
-				return false;
+	void Witdraw(double amount, char* Iban) {
+		for (int i = 0; i < count; i++) {
+			if (strcmp(accounts[i]->getIBAN(), Iban) == 0) {
+				accounts[i]->withdrawMoney(amount);
 			}
+			break;
 		}
-		return true;
 	}
-	bool NormalAcc_exist(char* IBAN) {
-		for (int i = 0; i < normal_count; i++)
-		{
-			if (strcmp(normal_accounts[i].getIBAN(), IBAN) == 0) {
-				return false;
+	void Deposit(double amount, char* Iban) {
+		for (int i = 0; i < count; i++) {
+			if (strcmp(accounts[i]->getIBAN(), Iban) == 0) {
+				accounts[i]->depositMoney(amount);
 			}
+			break;
 		}
-		return true;
-	}
-	bool PrivilegeAcc_exist(char* IBAN) {
-		for (int i = 0; i < privilege_count; i++)
-		{
-			if (strcmp(privilege_accounts[i].getIBAN(), IBAN) == 0) {
-				return false;
-			}
-		}
-		return true;
 	}
 
-	void CreateSavings_Account(int id, double amount, char* IBAN, double interestRate) {
+	void CreateSavings_Account(int id, double amount,const char* username, char* password,char* IBAN, double interestRate) {
 
 				SavingsAccount newAcc;
 				newAcc.setBalance(amount);
 				newAcc.setIban(IBAN);
 				newAcc.setID(id);
-				newAcc.setUserName(this->username);
-				newAcc.setPassword(this->password);
+				newAcc.setUserName(username);
+				newAcc.setPassword(password);
 				newAcc.setInvestRate(interestRate);
 
-				savings_count++;
-				SavingsAccount* place_holder = new SavingsAccount[savings_count];
-				for (int i = 0; i < savings_count - 1; i++)
+				count++;
+				Account** place_holder = new Account*[count];
+				for (int i = 0; i < count - 1; i++)
 				{
-					place_holder[i] = savings_accounts[i];
+					if (dynamic_cast<SavingsAccount*>(accounts[i])) {
+						place_holder[i] = new SavingsAccount(*dynamic_cast<SavingsAccount*>(accounts[i]));
+					}
 				}
-				delete[] this->savings_accounts;
+				delete[] this->accounts;
 
-				place_holder[savings_count - 1] = newAcc;
-				this->savings_accounts = place_holder;
+				place_holder[count - 1] = new SavingsAccount(newAcc);
+				this->accounts = place_holder;
 	}
-	void CreateNormal_Account(int id, double amount, char* IBAN) {
+	void CreateNormal_Account(int id, double amount, char* IBAN, const char* username, const char* password) {
 
 		NormalAccount newAcc;
 		newAcc.setBalance(amount);
 		newAcc.setIban(IBAN);
 		newAcc.setID(id);
-		newAcc.setUserName(this->username);
-		newAcc.setPassword(this->password);
+		newAcc.setUserName(username);
+		newAcc.setPassword(password);
 
-		normal_count++;
-		NormalAccount* place_holder = new NormalAccount[normal_count];
-		for (int i = 0; i < normal_count - 1; i++)
+		count++;
+		Account** place_holder = new Account * [count];
+		for (int i = 0; i < count - 1; i++)
 		{
-			place_holder[i] = normal_accounts[i];
+			if (dynamic_cast<NormalAccount*>(accounts[i])) {
+				place_holder[i] = new NormalAccount(*dynamic_cast<NormalAccount*>(accounts[i]));
+			}
 		}
-		delete[] this->normal_accounts;
+		delete[] this->accounts;
 
-		place_holder[normal_count - 1] = newAcc;
-		this->normal_accounts = place_holder;
+		place_holder[count - 1] = new NormalAccount(newAcc);
+		this->accounts = place_holder;
 	}
-	void CreatePrivilege_Account(int id, double amount, char* IBAN, double overdraft) {
+	void CreatePrivilege_Account(int id, double amount, char* IBAN, double overdraft, const char* username, const char* password) {
 
 		PrivilegeAccount newAcc;
 		newAcc.setBalance(amount);
 		newAcc.setIban(IBAN);
 		newAcc.setID(id);
-		newAcc.setUserName(this->username);
-		newAcc.setPassword(this->password);
+		newAcc.setUserName(username);
+		newAcc.setPassword(password);
 		newAcc.setOverdraft(overdraft);
 
-		privilege_count++;
-		PrivilegeAccount* place_holder = new PrivilegeAccount[privilege_count];
-		for (int i = 0; i < privilege_count - 1; i++)
+		count++;
+		Account** place_holder = new Account * [count];
+		for (int i = 0; i < count - 1; i++)
 		{
-			place_holder[i] = privilege_accounts[i];
-		}
-		delete[] this->privilege_accounts;
-
-		place_holder[privilege_count - 1] = newAcc;
-		this->privilege_accounts = place_holder;
-	}
-
-	void DeleteNormal_Account(char* IBAN) {
-		int index = 0;
-		for (int i = 0; i < normal_count; i++) {
-			if (NormalAcc_exist(IBAN) == false) {
-				index = i;
+			if (dynamic_cast<PrivilegeAccount*>(accounts[i])) {
+				place_holder[i] = new PrivilegeAccount(*dynamic_cast<PrivilegeAccount*>(accounts[i]));
 			}
 		}
-		normal_count--;
-		NormalAccount* place_holder = new NormalAccount[normal_count];
-		for (int i = 0; i < normal_count; i++) {
+		delete[] this->accounts;
+
+		place_holder[count - 1] = new PrivilegeAccount(newAcc);
+		this->accounts = place_holder;
+	}
+
+	void Delete_Account(char* IBAN) {
+		int index = 0;
+		for (int i = 0; i < count; i++) {
+			if (acc_exist(IBAN)) {
+				index = i;
+				break;
+			}
+		}
+		count--;
+		Account** place_holder = new Account * [count];
+		for (int i = 0; i < count - 1; i++) {
 			if (i < index) {
-				place_holder[i] = normal_accounts[i];
+				if (dynamic_cast<SavingsAccount*>(accounts[i])) {
+					place_holder[i] = new SavingsAccount(*dynamic_cast<SavingsAccount*>(accounts[i]));
+				}
+				else if (dynamic_cast<NormalAccount*>(accounts[i])) {
+					place_holder[i] = new NormalAccount(*dynamic_cast<NormalAccount*>(accounts[i]));
+				}
+				else if (dynamic_cast<PrivilegeAccount*>(accounts[i])) {
+					place_holder[i] = new PrivilegeAccount(*dynamic_cast<PrivilegeAccount*>(accounts[i]));
+				}
 			}
 			else {
-				place_holder[i] = normal_accounts[i++];
+				if (dynamic_cast<SavingsAccount*>(accounts[i])) {
+					place_holder[i] = new SavingsAccount(*dynamic_cast<SavingsAccount*>(accounts[i++]));
+				}
+				else if (dynamic_cast<NormalAccount*>(accounts[i])) {
+					place_holder[i] = new NormalAccount(*dynamic_cast<NormalAccount*>(accounts[i++]));
+				}
+				else if (dynamic_cast<PrivilegeAccount*>(accounts[i])) {
+					place_holder[i] = new PrivilegeAccount(*dynamic_cast<PrivilegeAccount*>(accounts[i++]));
+				}
 			}
 		}
 
-		delete[] this->normal_accounts;
-		this->normal_accounts = place_holder;
-	}
-	void DeleteSavings_Account(char* IBAN) {
-		int index = 0;
-		for (int i = 0; i < savings_count; i++) {
-			if (SavingsAcc_exist(IBAN) == false) {
-				index = i;
-			}
-		}
-		savings_count--;
-		SavingsAccount* place_holder = new SavingsAccount[savings_count];
-		for (int i = 0; i < savings_count; i++) {
-			if (i < index) {
-				place_holder[i] = savings_accounts[i];
-			}
-			else {
-				place_holder[i] = savings_accounts[i++];
-			}
-		}
-
-		delete[] this->savings_accounts;
-		this->savings_accounts = place_holder;
-	}
-	void DeletePrivilege_Account(char* IBAN) {
-		int index = 0;
-		for (int i = 0; i < privilege_count; i++) {
-			if (PrivilegeAcc_exist(IBAN) == false) {
-				index = i;
-			}
-		}
-		privilege_count--;
-		PrivilegeAccount* place_holder = new PrivilegeAccount[privilege_count];
-		for (int i = 0; i < privilege_count; i++) {
-			if (i < index) {
-				place_holder[i] = privilege_accounts[i];
-			}
-			else {
-				place_holder[i] = privilege_accounts[i++];
-			}
-		}
-
-		delete[] this->privilege_accounts;
-		this->privilege_accounts = place_holder;
+		delete[] this->accounts;
+		this->accounts = place_holder;
 	}
 
-	void PrintNormal_Accounts() {
-		for (int i = 0; i < normal_count; i++) {
-			cout << "Normal account: " << normal_accounts[i].getID() << endl;
+	void Print_Accounts() {
+		for (int i = 0; i < count; i++) {
+			cout << "Account: " << accounts[i]->getIBAN() << endl;
 		}
 
 	}
@@ -245,11 +203,11 @@ public:
 		free();
 	}
 	void free() {
-		delete[] username;
-		delete[] password;
-		delete[] savings_accounts;
-		delete[] normal_accounts;
-		delete[] privilege_accounts;
+		for (size_t i = 0; i < count; i++)
+		{
+			delete accounts[i];
+		}
+		delete[] accounts;
 	}
 
 	CreateAccounts(const CreateAccounts& other) {
@@ -258,33 +216,22 @@ public:
 
 	void copyFrom(const CreateAccounts& other) {
 
-		int len = strlen(other.username);
-		this->username = new char[len + 1];
-		strcpy(this->username, other.username);
-
-		int lenght = strlen(other.password);
-		this->password = new char[lenght + 1];
-		strcpy(this->password, other.password);
-
 		this->id = other.id;
-		this->normal_count = other.normal_count;
-		this->privilege_count = other.privilege_count;
-		this->savings_count = other.savings_count;
+		this->count = other.count;
 
 
-		this->normal_accounts = new NormalAccount[other.normal_count];
-		for (int i = 0; i < other.normal_count; i++) {
-			normal_accounts[i] = other.normal_accounts[i];
-		}
-
-		this->savings_accounts = new SavingsAccount[other.savings_count];
-		for (int i = 0; i < other.savings_count; i++) {
-			savings_accounts[i] = other.savings_accounts[i];
-		}
-
-		this->privilege_accounts = new PrivilegeAccount[other.privilege_count];
-		for (int i = 0; i < other.privilege_count; i++) {
-			privilege_accounts[i] = other.privilege_accounts[i];
+		this->accounts = new Account*[other.count];
+		for (int i = 0; i < count - 1; i++)
+		{
+			if (dynamic_cast<SavingsAccount*>(other.accounts[i])) {
+				accounts[i] = new SavingsAccount(*dynamic_cast<SavingsAccount*>(other.accounts[i]));
+			}
+			else if (dynamic_cast<NormalAccount*>(other.accounts[i])) {
+				accounts[i] = new NormalAccount(*dynamic_cast<NormalAccount*>(other.accounts[i]));
+			}
+			else if (dynamic_cast<PrivilegeAccount*>(other.accounts[i])) {
+				accounts[i] = new PrivilegeAccount(*dynamic_cast<PrivilegeAccount*>(other.accounts[i]));
+			}
 		}
 	}
 

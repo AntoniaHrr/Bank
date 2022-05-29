@@ -12,12 +12,6 @@ public:
 	NormalAccount(char* username, char* password, int ID, char* iban, double amount) : Account(username, password, ID, iban, amount) {
 
 	}
-	void displayInformation() const override 
-		{
-			cout << "Name: " << getUserName() << endl;
-			cout << "IBAN: " << getIBAN() << endl;
-			cout << "Balance" << getBalance() << endl;
-		}
 	void withdrawMoney(double amount) override {
 		if (amount <= 0) {
 			throw invalid_argument("Amount can't be negative");
@@ -28,8 +22,4 @@ public:
 		}
 	}
 
-	void depositMoney(double amount) override {
-		setBalance(getBalance() + amount);
-	}
-	
 };
