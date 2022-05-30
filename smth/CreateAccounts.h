@@ -26,11 +26,14 @@ public:
 	void setId(int id) {
 		this->id = id;
 	}
-
+   //getters
 	char* getIBAN(int i) const {
 		return accounts[i]->getIBAN();
 	}
-	//getters
+
+	const int getCount() const {
+		return count;
+	}
 
 	const int getID() const {
 		return id;
@@ -55,7 +58,6 @@ public:
 		}
 		return false;
 	}
-
 
 	void Witdraw(double amount, char* Iban) {
 		for (int i = 0; i < count; i++) {
@@ -183,12 +185,14 @@ public:
 	}
 
 	void Print_Accounts() {
+		if (count == 0) {
+			cout << "Account is empty";
+			return;
+		}
 		for (int i = 0; i < count; i++) {
 			cout << "Account: " << accounts[i]->getIBAN() << endl;
 		}
-
 	}
-
 
 	CreateAccounts& operator=(const CreateAccounts& other) {
 		if (this != &other)
@@ -218,7 +222,6 @@ public:
 
 		this->id = other.id;
 		this->count = other.count;
-
 
 		this->accounts = new Account*[other.count];
 		for (int i = 0; i < count - 1; i++)

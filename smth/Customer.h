@@ -75,6 +75,7 @@ public:
 		return id;
 	}
 
+
 	void free() {
 		delete[] name;
 		delete[] email;

@@ -17,6 +17,7 @@ private:
 	CreateAccounts* accounts;
 	int accounts_count;
 public:
+
 	Bank() {
 		this->customers = nullptr;
 		this->accounts = nullptr;
@@ -39,7 +40,6 @@ public:
 	}
 
 	void addCustomer(char* name, char* email, int id) {
-
 		if (CustomerExist(id) == true) {
 			cout << "Customer is already registered!"<<endl;
 			return;
@@ -67,7 +67,7 @@ public:
 		newAccount.setId(id);
 
 		accounts_count++;
-		CreateAccounts* place_holder_accounts = new CreateAccounts[customers_count];
+		CreateAccounts* place_holder_accounts = new CreateAccounts[accounts_count];
 		for (int i = 0; i < accounts_count - 1; i++)
 		{
 			place_holder_accounts[i] = accounts[i];
@@ -79,44 +79,43 @@ public:
 		this->accounts = place_holder_accounts;
 	}
 	void DeleteCustomer(int id) {
-		int index;
-		for (int i = 0; i < customers_count; i++) {
-			if (customers[i].getId() == id) {
-				index = i;
-				break;
-			}
+				int index;
+				for (int i = 0; i < customers_count; i++) {
+					if (customers[i].getId() == id) {
+					index = i;
+					break;
+					}
+				}
+
+				accounts_count--;
+				CreateAccounts* place_holder = new CreateAccounts[accounts_count];
+				for (int i = 0; i < accounts_count; i++) {
+					if (i < index) {
+					place_holder[i] = accounts[i];
+					}
+				else {
+					place_holder[i] = accounts[i++];
+				     }
+				}
+
+			delete[] this->accounts;
+			this->accounts = place_holder;
+
+	customers_count--;
+	Customer* place_holder_customers = new Customer[customers_count];
+	for (int i = 0; i < customers_count; i++) {
+		if (i < index) {
+			place_holder_customers[i] = customers[i];
 		}
-
-		accounts_count--;
-		CreateAccounts* place_holder = new CreateAccounts[accounts_count];
-		for (int i = 0; i < accounts_count; i++) {
-			if (i < index) {
-				place_holder[i] = accounts[i];
-			}
-			else {
-				place_holder[i] = accounts[i++];
-			}
+		else {
+			place_holder_customers[i] = customers[i++];
 		}
-
-		delete[] this->accounts;
-		this->accounts = place_holder;
-
-		customers_count--;
-		Customer* place_holder_customers = new Customer[customers_count];
-		for (int i = 0; i < customers_count; i++) {
-			if (i < index) {
-				place_holder_customers[i] = customers[i];
-			}
-			else {
-				place_holder_customers[i] = customers[i++];
-			}
-		}
-
-		delete[] this->customers;
-		this->customers = place_holder_customers;
-
-
 	}
+
+	delete[] this->customers;
+	this->customers = place_holder_customers;
+	}
+
 	void DeleteAccount(char* IBAN) {
 		for (int i = 0; i < accounts_count; i++) {
 			if (accounts[i].acc_exist(IBAN)) {
@@ -139,7 +138,7 @@ public:
 	void addNormal_Account(int Id, double amount, char* IBAN, const char* username, const char* password) {
 		for (int i = 0; i < accounts_count; i++)
 		{
-				if (accounts[i].acc_exist(IBAN) == false) {
+				if (accounts[i].acc_exist(IBAN)) {
 					cout << "Can't create account with same IBAN!";
 					return;
 				}
@@ -150,7 +149,7 @@ public:
 	void addPrivilege_Account(int Id, double amount, char* IBAN, double overdraft,const char* username, const char* password) {
 		for (int i = 0; i < accounts_count; i++)
 		{
-				if (accounts[i].acc_exist(IBAN) == false) {
+				if (accounts[i].acc_exist(IBAN)) {
 					cout << "Can't create account with same IBAN!";
 					return;
 				}
@@ -159,28 +158,32 @@ public:
 		}
 	}
 
-	void transfer( char* FromIBAN,  char* ToIBAN, double amount) {
+	void transfer(char* FromIBAN, char* ToIBAN, double amount) {
+
 		for (int i = 0; i < accounts_count; i++) {
-			if (strcmp(accounts[i].getIBAN(i), FromIBAN)==0) {
-				for (int j = 0; j < accounts_count; j++) {
-					if (strcmp(accounts[j].getIBAN(j), ToIBAN) == 0)
-					{
-						accounts[i].Witdraw(amount, FromIBAN);
-						accounts[j].Deposit(amount, ToIBAN);
-					}
+			for (int l = 0; l < accounts[i].getCount(); l++) {
+				if (strcmp(accounts[i].getIBAN(l), FromIBAN) == 0)
+				{
+					accounts[i].Witdraw(amount, accounts[i].getIBAN(l));
+					cout << "Withdraw"<<endl;
+				}
+				else if (strcmp(accounts[i].getIBAN(l), ToIBAN) == 0) {
+					accounts[i].Deposit(amount, accounts[i].getIBAN(l));
+					cout << "Deposit"<<endl;
 				}
 			}
+			
 		}
 	}
 
 	void listCustomers() {
 		for (int i = 0; i < customers_count; i++) {
-			cout << customers[i].getName() << endl;
+			cout << customers[i].getId() << endl;
 		}
 	}
 	void listAccounts() {
 		for (int i = 0; i < accounts_count; i++) {
-				accounts[i].Print_Accounts();
+			accounts[i].Print_Accounts();
 		}
 
 	}

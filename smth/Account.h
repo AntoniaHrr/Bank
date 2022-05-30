@@ -142,8 +142,14 @@ public:
 		cout << "Balance" << getBalance() << endl;
 	}
 
-	int getTime() const throw() {
+	int getYear() const throw() {
 		return dateOfCreation->tm_year + 1900;
+	}
+	int getMonth() const throw() {
+		return dateOfCreation->tm_mon + 1;
+	}
+	int getWeekDay() const throw() {
+		return dateOfCreation->tm_wday;
 	}
 
 	virtual ~Account() {

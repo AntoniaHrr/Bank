@@ -6,7 +6,7 @@ using namespace std;
 
 int main() {
     Bank bank;
-    int number;
+    int number=0;
 
     ////menu///
     cout << "1.Register new customer"<<endl;
@@ -32,11 +32,12 @@ int main() {
             cout << "Enter email: ";
             char* email;
             email = new char[100];
-            cin.getline(email, 100);
+           cin.getline(email, 100);
 
             cout << "Enter ID: ";
             int id;
             cin >> id;
+            cin.ignore();
 
             bank.addCustomer(name, email, id);
         }
@@ -73,7 +74,6 @@ int main() {
                 cin >> amount;
                 cin.ignore();
                 bank.addNormal_Account(Id, amount, Iban, username, password);
-                delete[] Iban;
             }
             else if(type == 2) {
                 cout << "Enter IBAN:";
@@ -131,7 +131,20 @@ int main() {
                 bank.listCustomerAccounts(Id);
             }
         }
-        else { cout << "Invalid command"; }
+        else if (number == 9) {
+        char* from = new char[100];
+        char* to = new char[100];
+        double amount;
+        cout << "Enter FromIBAN:";
+        cin.getline(from, 100);
+        cout << "Enter ToIBAN:";
+        cin.getline(to, 100);
+        cout << "Enter amount:";
+        cin >> amount;
+        cin.ignore();
+
+        bank.transfer(from, to, amount);
+}
        
     }
     /*cout << "Enter name: ";
